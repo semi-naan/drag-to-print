@@ -1,0 +1,362 @@
+.root,
+.dialog-pane {
+    -fx-font-family: "Segoe UI", "Inter", "Helvetica Neue", "Noto Sans", "DejaVu Sans", sans-serif;
+    -fx-font-size: 13px;
+    -fx-dnp-bg: #f5f6f8;
+    -fx-dnp-surface: #ffffff;
+    -fx-dnp-sunken: #eceef1;
+    -fx-dnp-border: #e1e4e8;
+    -fx-dnp-border-strong: #d0d7de;
+    -fx-dnp-text: #1f2328;
+    -fx-dnp-text-muted: #57606a;
+    -fx-dnp-text-subtle: #8c959f;
+    -fx-dnp-accent: #0969da;
+    -fx-dnp-accent-hover: #0860ca;
+    -fx-dnp-accent-pressed: #0550ae;
+    -fx-dnp-accent-soft: #ddf4ff;
+    -fx-dnp-focus-ring: #9ecbff;
+    -fx-dnp-danger: #cf222e;
+    -fx-dnp-warning: #9a6700;
+    -fx-dnp-success: #1a7f37;
+}
+
+.root {
+    -fx-background-color: -fx-dnp-bg;
+}
+
+.dnp-top-bar {
+    -fx-background-color: -fx-dnp-surface;
+    -fx-border-color: -fx-dnp-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 10 16 10 16;
+    -fx-spacing: 12;
+    -fx-alignment: center-left;
+}
+
+.dnp-app-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-dnp-text;
+}
+
+.dnp-document-info {
+    -fx-font-size: 12px;
+    -fx-text-fill: -fx-dnp-text-muted;
+}
+
+.button {
+    -fx-background-color: -fx-dnp-surface;
+    -fx-background-radius: 6;
+    -fx-border-color: -fx-dnp-border-strong;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-padding: 6 14 6 14;
+    -fx-text-fill: -fx-dnp-text;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: -fx-dnp-sunken;
+}
+
+.button:pressed {
+    -fx-background-color: derive(-fx-dnp-sunken, -6%);
+}
+
+.button:focused {
+    -fx-border-color: -fx-dnp-accent;
+    -fx-effect: dropshadow(gaussian, -fx-dnp-focus-ring, 4, 0.25, 0, 0);
+}
+
+.button:disabled {
+    -fx-opacity: 0.45;
+}
+
+.button.dnp-primary {
+    -fx-background-color: -fx-dnp-accent;
+    -fx-border-color: -fx-dnp-accent;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button.dnp-primary:hover {
+    -fx-background-color: -fx-dnp-accent-hover;
+    -fx-border-color: -fx-dnp-accent-hover;
+}
+
+.button.dnp-primary:pressed {
+    -fx-background-color: -fx-dnp-accent-pressed;
+    -fx-border-color: -fx-dnp-accent-pressed;
+}
+
+.button.dnp-icon {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 4 6 4 6;
+}
+
+.button.dnp-icon:hover {
+    -fx-background-color: -fx-dnp-sunken;
+}
+
+.button.dnp-wide {
+    -fx-max-width: infinity;
+    -fx-alignment: center;
+}
+
+.dnp-document-panel {
+    -fx-background-color: -fx-dnp-surface;
+    -fx-border-color: -fx-dnp-border;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 12;
+    -fx-spacing: 8;
+}
+
+.dnp-panel-title {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-dnp-text-subtle;
+}
+
+.list-view {
+    -fx-background-color: -fx-dnp-surface;
+    -fx-background-radius: 6;
+    -fx-border-color: -fx-dnp-border;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-padding: 2;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-background-radius: 4;
+    -fx-padding: 7 10 7 10;
+    -fx-text-fill: -fx-dnp-text;
+}
+
+.list-cell:hover {
+    -fx-background-color: -fx-dnp-sunken;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: -fx-dnp-accent-soft;
+    -fx-text-fill: -fx-dnp-accent-pressed;
+    -fx-font-weight: bold;
+}
+
+.list-view .placeholder .label {
+    -fx-text-fill: -fx-dnp-text-subtle;
+}
+
+.dnp-empty-state {
+    -fx-background-color: -fx-dnp-surface;
+    -fx-background-radius: 12;
+    -fx-border-color: -fx-dnp-border-strong;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    -fx-border-radius: 12;
+    -fx-padding: 40;
+    -fx-spacing: 10;
+    -fx-alignment: center;
+    -fx-max-width: 640;
+    -fx-max-height: 360;
+}
+
+.dnp-empty-state.dnp-drop-active {
+    -fx-border-color: -fx-dnp-accent;
+    -fx-background-color: -fx-dnp-accent-soft;
+}
+
+.dnp-drop-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-dnp-text;
+}
+
+.dnp-drop-detail {
+    -fx-text-fill: -fx-dnp-text-muted;
+    -fx-text-alignment: center;
+}
+
+.preview-pane {
+    -fx-background-color: -fx-dnp-sunken;
+}
+
+.preview-canvas {
+    -fx-background-color: -fx-dnp-sunken;
+    -fx-padding: 8;
+    -fx-alignment: center;
+}
+
+.preview-canvas .text-area {
+    -fx-font-family: "JetBrains Mono", "Fira Code", "DejaVu Sans Mono", Consolas, monospace;
+    -fx-font-size: 12px;
+}
+
+.preview-canvas .text-area .content {
+    -fx-font-family: "JetBrains Mono", "Fira Code", "DejaVu Sans Mono", Consolas, monospace;
+    -fx-font-size: 12px;
+}
+
+.preview-pane .image-view {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 12, 0, 0, 3);
+}
+
+.preview-nav {
+    -fx-padding: 6;
+    -fx-spacing: 8;
+    -fx-alignment: center;
+}
+
+.preview-page-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: -fx-dnp-text-muted;
+}
+
+.dnp-editor {
+    -fx-background-color: -fx-dnp-surface;
+    -fx-background-radius: 6;
+    -fx-border-color: -fx-dnp-border;
+    -fx-border-width: 0 0 0 1;
+    -fx-border-radius: 6;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "DejaVu Sans Mono", Consolas, monospace;
+    -fx-font-size: 12px;
+}
+
+.dnp-editor .content {
+    -fx-background-color: -fx-dnp-surface;
+    -fx-background-radius: 6;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "DejaVu Sans Mono", Consolas, monospace;
+    -fx-font-size: 12px;
+}
+
+.dnp-editor:focused {
+    -fx-border-color: -fx-dnp-accent;
+    -fx-border-width: 1;
+}
+
+.dnp-status-bar {
+    -fx-background-color: -fx-dnp-surface;
+    -fx-border-color: -fx-dnp-border;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 6 12 6 12;
+    -fx-font-size: 12px;
+    -fx-text-fill: -fx-dnp-text-muted;
+    -fx-max-width: infinity;
+}
+
+.dnp-status-error {
+    -fx-text-fill: -fx-dnp-danger;
+}
+
+.dnp-status-success {
+    -fx-text-fill: -fx-dnp-success;
+}
+
+.dnp-toast {
+    -fx-background-color: derive(-fx-dnp-text, 8%);
+    -fx-background-radius: 8;
+    -fx-padding: 8 14 8 14;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 12, 0, 0, 4);
+}
+
+.dnp-toast-error {
+    -fx-background-color: -fx-dnp-danger;
+}
+
+.dnp-toast-success {
+    -fx-background-color: -fx-dnp-success;
+}
+
+.text-field,
+.spinner .text-field {
+    -fx-background-color: -fx-dnp-surface;
+    -fx-background-radius: 6;
+    -fx-border-color: -fx-dnp-border-strong;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-padding: 5 8 5 8;
+}
+
+.text-field:focused,
+.spinner .text-field:focused {
+    -fx-border-color: -fx-dnp-accent;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: -fx-dnp-sunken;
+}
+
+.dialog-pane {
+    -fx-background-color: -fx-dnp-surface;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: -fx-dnp-sunken;
+}
+
+.dialog-pane .header-panel .label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane .content .label {
+    -fx-text-fill: -fx-dnp-text-muted;
+}
+
+.dialog-pane .button-bar {
+    -fx-padding: 12 16 12 16;
+    -fx-spacing: 8;
+}
+
+.dnp-error-text {
+    -fx-text-fill: -fx-dnp-danger;
+    -fx-font-size: 12px;
+}
+
+.progress-indicator {
+    -fx-progress-color: -fx-dnp-accent;
+}
+
+.dnp-icon-print,
+.dnp-icon-save,
+.dnp-icon-close,
+.dnp-icon-chevron-left,
+.dnp-icon-chevron-right {
+    -fx-background-color: -fx-dnp-text;
+}
+
+.dnp-icon-drop {
+    -fx-background-color: -fx-dnp-text-subtle;
+}
+
+.button.dnp-primary .dnp-icon-print {
+    -fx-background-color: white;
+}
+
+.dnp-icon-print {
+    -fx-shape: "M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z";
+}
+
+.dnp-icon-save {
+    -fx-shape: "M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z";
+}
+
+.dnp-icon-close {
+    -fx-shape: "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z";
+}
+
+.dnp-icon-drop {
+    -fx-shape: "M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z";
+}
+
+.dnp-icon-chevron-left {
+    -fx-shape: "M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z";
+}
+
+.dnp-icon-chevron-right {
+    -fx-shape: "M8.59 16.59 10 18l6-6-6-6-1.41 1.41L13.17 12z";
+}
