@@ -16,9 +16,20 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 public final class PreviewPane extends BorderPane {
+    private static final double CANVAS_PADDING = 8;
+    private static final double IMAGE_CARD_PADDING = 8;
+    private static final double IMAGE_CARD_BORDER = 1;
+    private static final double IMAGE_INSET =
+            2 * (CANVAS_PADDING + IMAGE_CARD_PADDING + IMAGE_CARD_BORDER);
+    private static final double TEXT_CARD_PADDING = 6;
+    private static final double TEXT_MAX_WIDTH = 720;
+    private static final double TEXT_MAX_HEIGHT = 800;
+
     private final StackPane content = new StackPane();
     private final ImageView imageView = new ImageView();
     private final TextArea textArea = new TextArea();
+    private final StackPane imageCard = new StackPane(imageView);
+    private final StackPane textCard = new StackPane(textArea);
     private final Button previousButton = createNavigationButton("dnp-icon-chevron-left");
     private final Button nextButton = createNavigationButton("dnp-icon-chevron-right");
     private final Label pageLabel = new Label();
@@ -30,18 +41,37 @@ public final class PreviewPane extends BorderPane {
     public PreviewPane() {
         getStyleClass().add("preview-pane");
 
+        content.getStyleClass().add("preview-canvas");
+        content.setPadding(new Insets(CANVAS_PADDING));
+        content.setAlignment(Pos.CENTER);
+        content.setMinSize(0, 0);
+
         imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
         imageView.fitWidthProperty().bind(Bindings.createDoubleBinding(
-                () -> Math.max(0, content.getWidth() - 24), content.widthProperty()));
+                () -> imageFitWidth(), content.widthProperty(), content.heightProperty(),
+                imageView.imageProperty()));
         imageView.fitHeightProperty().bind(Bindings.createDoubleBinding(
-                () -> Math.max(0, content.getHeight() - 24), content.heightProperty()));
+                () -> imageFitHeight(), content.widthProperty(), content.heightProperty(),
+                imageView.imageProperty()));
+
+        imageCard.getStyleClass().add("preview-page-card");
+        imageCard.setPadding(new Insets(IMAGE_CARD_PADDING));
+        imageCard.setMinSize(0, 0);
+        imageCard.maxWidthProperty().bind(imageView.fitWidthProperty().add(2 * (IMAGE_CARD_PADDING + IMAGE_CARD_BORDER)));
+        imageCard.maxHeightProperty().bind(imageView.fitHeightProperty().add(2 * (IMAGE_CARD_PADDING + IMAGE_CARD_BORDER)));
 
         textArea.setEditable(false);
         textArea.setWrapText(false);
+        textArea.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
-        content.getStyleClass().add("preview-canvas");
-        content.setPadding(new Insets(8));
-        content.setAlignment(Pos.CENTER);
+        textCard.getStyleClass().add("preview-page-card");
+        textCard.setPadding(new Insets(TEXT_CARD_PADDING));
+        textCard.setMinSize(0, 0);
+        textCard.maxWidthProperty().bind(Bindings.createDoubleBinding(
+                () -> textCardWidth(), content.widthProperty()));
+        textCard.maxHeightProperty().bind(Bindings.createDoubleBinding(
+                () -> textCardHeight(), content.heightProperty()));
 
         previousButton.setOnAction(event -> showPage(pageIndex - 1));
         nextButton.setOnAction(event -> showPage(pageIndex + 1));
@@ -62,6 +92,34 @@ public final class PreviewPane extends BorderPane {
         button.getStyleClass().add("dnp-icon");
         button.setGraphic(Icons.of(iconStyleClass, 16));
         return button;
+    }
+
+    private double imageFitWidth() {
+        Image image = imageView.getImage();
+        return image == null ? 0 : image.getWidth() * imageScale(image);
+    }
+
+    private double imageFitHeight() {
+        Image image = imageView.getImage();
+        return image == null ? 0 : image.getHeight() * imageScale(image);
+    }
+
+    private double imageScale(Image image) {
+        double availableWidth = content.getWidth() - IMAGE_INSET;
+        double availableHeight = content.getHeight() - IMAGE_INSET;
+        if (image.getWidth() <= 0 || image.getHeight() <= 0
+                || availableWidth <= 0 || availableHeight <= 0) {
+            return 0;
+        }
+        return Math.min(Math.min(availableWidth / image.getWidth(), availableHeight / image.getHeight()), 1.0);
+    }
+
+    private double textCardWidth() {
+        return Math.max(0, Math.min(TEXT_MAX_WIDTH, content.getWidth() - 2 * CANVAS_PADDING));
+    }
+
+    private double textCardHeight() {
+        return Math.max(0, Math.min(TEXT_MAX_HEIGHT, content.getHeight() - 2 * CANVAS_PADDING));
     }
 
     public void setDocument(RenderedDocument document) {
@@ -108,10 +166,10 @@ public final class PreviewPane extends BorderPane {
                 BufferedImage bufferedImage = page.image();
                 Image image = SwingFXUtils.toFXImage(bufferedImage, null);
                 imageView.setImage(image);
-                content.getChildren().add(imageView);
+                content.getChildren().add(imageCard);
             } else {
                 textArea.setText(page.text());
-                content.getChildren().add(textArea);
+                content.getChildren().add(textCard);
             }
         } catch (PageRenderException e) {
             Label error = new Label("Could not render this page: " + e.getMessage());

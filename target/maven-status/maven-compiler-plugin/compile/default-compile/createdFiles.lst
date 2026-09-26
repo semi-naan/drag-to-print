@@ -1,4 +1,5 @@
 com/dragnprint/io/WordDocumentWriter.class
+com/dragnprint/util/TextStatistics.class
 com/dragnprint/Launcher.class
 com/dragnprint/preview/ListPageProvider.class
 com/dragnprint/io/PdfDocumentReader.class

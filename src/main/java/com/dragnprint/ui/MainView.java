@@ -119,6 +119,7 @@ public final class MainView extends StackPane {
                 documentList.refresh();
             }
         });
+        editor.setOnSaveRequested(this::saveCurrent);
 
         stage.setOnCloseRequest(this::handleCloseRequest);
         updateContent(null);
@@ -427,7 +428,7 @@ public final class MainView extends StackPane {
         try {
             writers.write(model.text(), target, targetType);
             model.setPath(target);
-            model.setDirty(false);
+            model.markSaved();
             updateContent(model);
             documentList.refresh();
             showSuccess("Saved " + target.getFileName() + ".");

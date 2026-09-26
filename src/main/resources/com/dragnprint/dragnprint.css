@@ -198,7 +198,12 @@
     -fx-font-size: 12px;
 }
 
-.preview-pane .image-view {
+.preview-page-card {
+    -fx-background-color: -fx-dnp-surface;
+    -fx-background-radius: 4;
+    -fx-border-color: -fx-dnp-border;
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 12, 0, 0, 3);
 }
 
@@ -233,6 +238,61 @@
 .dnp-editor:focused {
     -fx-border-color: -fx-dnp-accent;
     -fx-border-width: 1;
+}
+
+.dnp-editor-toolbar {
+    -fx-background-color: -fx-dnp-surface;
+    -fx-border-color: -fx-dnp-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 6 8 6 8;
+    -fx-spacing: 8;
+    -fx-alignment: center-left;
+}
+
+.dnp-editor-toolbar .toggle-button {
+    -fx-background-color: -fx-dnp-surface;
+    -fx-background-radius: 6;
+    -fx-border-color: -fx-dnp-border-strong;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-padding: 3 12 3 12;
+    -fx-text-fill: -fx-dnp-text;
+    -fx-cursor: hand;
+}
+
+.dnp-editor-toolbar .toggle-button:selected {
+    -fx-background-color: -fx-dnp-accent-soft;
+    -fx-border-color: -fx-dnp-accent;
+    -fx-text-fill: -fx-dnp-accent-pressed;
+    -fx-font-weight: bold;
+}
+
+.dnp-editor-toolbar .toggle-button:disabled {
+    -fx-opacity: 0.45;
+}
+
+.dnp-editor-status {
+    -fx-background-color: -fx-dnp-surface;
+    -fx-border-color: -fx-dnp-border;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 4 10 4 10;
+    -fx-spacing: 12;
+    -fx-alignment: center-left;
+}
+
+.dnp-editor-dirty {
+    -fx-font-size: 11px;
+    -fx-text-fill: -fx-dnp-text-muted;
+}
+
+.dnp-editor-dirty:modified {
+    -fx-text-fill: -fx-dnp-warning;
+    -fx-font-weight: bold;
+}
+
+.dnp-editor-count {
+    -fx-font-size: 11px;
+    -fx-text-fill: -fx-dnp-text-subtle;
 }
 
 .dnp-status-bar {

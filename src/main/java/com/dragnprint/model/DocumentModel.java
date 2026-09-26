@@ -12,6 +12,7 @@ public final class DocumentModel implements AutoCloseable {
     private final DocumentType type;
     private final RenderedDocument rendered;
     private String text;
+    private String savedText;
     private boolean dirty;
     private boolean closed;
 
@@ -20,6 +21,7 @@ public final class DocumentModel implements AutoCloseable {
         this.type = Objects.requireNonNull(type, "type");
         this.rendered = Objects.requireNonNull(rendered, "rendered");
         this.text = type.isEditable() ? TextPaginator.join(rendered.pages()) : null;
+        this.savedText = this.text;
         this.dirty = false;
     }
 
@@ -46,6 +48,7 @@ public final class DocumentModel implements AutoCloseable {
     public void setText(String text) {
         if (isEditable()) {
             this.text = Objects.requireNonNull(text, "text");
+            this.dirty = !Objects.equals(savedText, text);
         }
     }
 
@@ -53,8 +56,9 @@ public final class DocumentModel implements AutoCloseable {
         return dirty;
     }
 
-    public void setDirty(boolean dirty) {
-        this.dirty = dirty;
+    public void markSaved() {
+        savedText = text;
+        dirty = false;
     }
 
     public RenderedDocument toRendered() {

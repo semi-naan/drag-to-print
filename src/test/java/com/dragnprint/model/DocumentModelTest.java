@@ -28,8 +28,42 @@ class DocumentModelTest {
         RenderedDocument rendered = new RenderedDocument("notes.txt", DocumentType.TEXT,
                 List.of(RenderedPage.ofText("hi")));
         DocumentModel model = new DocumentModel(Path.of("/tmp/notes.txt"), DocumentType.TEXT, rendered);
-        model.setDirty(true);
+        model.setText("hi there");
         assertEquals("notes.txt *", model.displayName());
+    }
+
+    @Test
+    void editingMarksDirtyAndRevertingToSavedTextClearsIt() {
+        DocumentModel model = editableDocument("notes.txt", "hello");
+        assertFalse(model.isDirty());
+
+        model.setText("hello world");
+        assertTrue(model.isDirty());
+
+        model.setText("hello");
+        assertFalse(model.isDirty());
+    }
+
+    @Test
+    void markSavedMovesBaselineToCurrentText() {
+        DocumentModel model = editableDocument("notes.txt", "hello");
+        model.setText("hello world");
+        assertTrue(model.isDirty());
+
+        model.markSaved();
+        assertFalse(model.isDirty());
+
+        model.setText("hello");
+        assertTrue(model.isDirty());
+
+        model.setText("hello world");
+        assertFalse(model.isDirty());
+    }
+
+    private static DocumentModel editableDocument(String name, String text) {
+        RenderedDocument rendered = new RenderedDocument(name, DocumentType.TEXT,
+                List.of(RenderedPage.ofText(text)));
+        return new DocumentModel(Path.of("/tmp/" + name), DocumentType.TEXT, rendered);
     }
 
     @Test

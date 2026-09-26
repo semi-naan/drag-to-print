@@ -26,6 +26,13 @@ illegal in packages and class names.
   failed load so file handles are not leaked.
 - Printing: `javafx.print.PrinterJob` behind `PrintService`; `FakePrintService`
   is used by headless tests.
+- Preview content wraps in centered page cards (`preview/PreviewPane`): image
+  pages fit to `min(available, natural)` size preserving aspect and never
+  upscale; text pages cap at 720x800 with internal scrolling.
+- Editable documents show an editor toolbar (word-wrap toggle, on by default)
+  and a status row with modified state plus live word/character counts
+  (`edit/DocumentEditor`, `util/TextStatistics`); Ctrl+Save triggers the same
+  save flow as the top-bar button.
 - The JavaFX dependency is declared without a classifier; the OS-specific
   classifier comes from OpenJFX's OS-activated Maven profiles. The build is
   therefore per-OS (do not hardcode a classifier).
@@ -55,7 +62,7 @@ machine:
 
 - build: `./mvnw -q clean package` (succeeds; jar in `target/`)
 - run: `./mvnw javafx:run` (dev launch; requires a display)
-- test: `./mvnw -q clean test` (66 tests pass)
+- test: `./mvnw -q clean test` (72 tests pass)
 - test (single test): `./mvnw -q test -Dtest=DocumentTypeTest`
 - lint / format: none configured
 

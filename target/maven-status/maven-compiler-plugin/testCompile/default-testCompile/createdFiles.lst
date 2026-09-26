@@ -14,6 +14,7 @@ com/dragnprint/io/ImageDocumentReaderTest.class
 com/dragnprint/io/DocumentWritersTest.class
 com/dragnprint/io/DocumentReadersTest.class
 com/dragnprint/io/PdfDocumentReaderTest.class
+com/dragnprint/util/TextStatisticsTest.class
 com/dragnprint/io/WordDocumentReaderTest.class
 com/dragnprint/preview/RenderedDocumentTest.class
 com/dragnprint/util/TextPaginatorTest.class
