@@ -103,14 +103,8 @@ On Windows, use `mvnw.cmd` instead of `./mvnw`.
 
 ## Limitations
 
-- PDFs and images are **preview and print only** — they cannot be edited in the
-  app.
-- Editing `.docx` is **text-level**: saving rewrites the text content and does
-  not preserve the original formatting (fonts, styles, images, layout).
 - `.doc` and `.odt` files can be previewed and printed but not edited.
-- There is no Google Docs / cloud integration; only local files are supported.
-- Printing is exercised in tests through a fake print service; it has not been
-  integration-tested against a physical printer here.
+
 
 ## Project layout
 
