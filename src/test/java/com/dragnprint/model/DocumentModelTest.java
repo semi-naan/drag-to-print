@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.dragnprint.preview.RenderedDocument;
 import com.dragnprint.preview.RenderedPage;
+import com.dragnprint.io.WordDocumentFormat;
 import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -84,5 +85,22 @@ class DocumentModelTest {
         assertFalse(model.isEditable());
         assertEquals(null, model.text());
         assertEquals(rendered, model.toRendered());
+    }
+
+    @Test
+    void wordDocumentKeepsOriginalPreviewAndTracksParagraphEdits() {
+        RenderedDocument rendered = new RenderedDocument("letter.docx", DocumentType.DOCX,
+                List.of(RenderedPage.ofText("Hello world")));
+        DocumentModel model = new DocumentModel(Path.of("letter.docx"), DocumentType.DOCX, rendered,
+                List.of(new WordDocumentFormat.Paragraph("Hello world", true)));
+
+        assertTrue(model.isEditable());
+        assertEquals(rendered, model.toRendered());
+        model.setParagraphText(0, "Hello friend");
+        assertTrue(model.isDirty());
+        assertEquals(rendered, model.toRendered());
+        model.markSaved();
+        assertFalse(model.isDirty());
+        assertEquals("Hello friend", model.wordParagraphs().getFirst().text());
     }
 }

@@ -35,4 +35,15 @@ public final class DocumentWriters {
         }
         throw new UnsupportedDocumentException("Editing is not supported for " + type + " documents");
     }
+
+    public void writeWord(Path source, List<WordDocumentFormat.Paragraph> original,
+            List<String> edited, Path target) throws IOException {
+        for (DocumentWriter writer : writers) {
+            if (writer instanceof WordDocumentWriter wordWriter) {
+                wordWriter.writePreservingFormat(source, original, edited, target);
+                return;
+            }
+        }
+        throw new UnsupportedDocumentException("Editing is not supported for DOCX documents");
+    }
 }

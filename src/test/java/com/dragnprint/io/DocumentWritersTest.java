@@ -47,6 +47,16 @@ class DocumentWritersTest {
     }
 
     @Test
+    void plainDocxWriterDoesNotReplaceAnExistingDocument() throws IOException {
+        Path file = tempDir.resolve("existing.docx");
+        new DocumentWriters().write("original", file, DocumentType.DOCX);
+
+        assertThrows(java.nio.file.FileAlreadyExistsException.class,
+                () -> new DocumentWriters().write("replacement", file, DocumentType.DOCX));
+        assertTrue(TextPaginator.join(new WordDocumentReader().read(file).pages()).contains("original"));
+    }
+
+    @Test
     void rejectsReadOnlyTypes() {
         DocumentWriters writers = new DocumentWriters();
         UnsupportedDocumentException exception = assertThrows(UnsupportedDocumentException.class,

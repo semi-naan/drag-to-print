@@ -48,7 +48,13 @@ public final class DocumentLoader {
                 try {
                     Path path = file.toPath();
                     RenderedDocument rendered = readers.read(path);
-                    loaded.add(new DocumentModel(path, type, rendered));
+                    try {
+                        loaded.add(new DocumentModel(path, type, rendered,
+                                type == DocumentType.DOCX ? WordDocumentFormat.read(path) : null));
+                    } catch (Exception e) {
+                        rendered.close();
+                        throw e;
+                    }
                 } catch (OutOfMemoryError e) {
                     notices.add(file.getName() + " could not be opened: out of memory.");
                     break;

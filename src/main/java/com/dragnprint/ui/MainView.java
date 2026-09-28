@@ -2,6 +2,7 @@ package com.dragnprint.ui;
 
 import com.dragnprint.edit.DocumentEditor;
 import com.dragnprint.edit.SaveConflictDialog;
+import com.dragnprint.edit.WordDocumentEditor;
 import com.dragnprint.io.DocumentLoader;
 import com.dragnprint.io.DocumentReaders;
 import com.dragnprint.io.DocumentWriters;
@@ -54,17 +55,20 @@ public final class MainView extends StackPane {
     private final ListView<DocumentModel> documentList = new ListView<>(documents);
     private final PreviewPane previewPane = new PreviewPane();
     private final DocumentEditor editor = new DocumentEditor();
+    private final WordDocumentEditor wordEditor = new WordDocumentEditor();
     private final SplitPane mainSplit = new SplitPane();
     private final SplitPane workspaceSplit = new SplitPane();
     private final StackPane centerHost = new StackPane();
     private final Label statusLabel = new Label();
     private final Label documentInfo = new Label();
     private final Button saveButton = new Button("Save");
+    private final Button editButton = new Button("Edit DOCX");
     private final ProgressIndicator busyIndicator = new ProgressIndicator();
     private final VBox emptyStateCard;
     private final StackPane emptyState;
 
     private boolean switchingSelection;
+    private boolean editingWord;
     private Task<DocumentLoader.Result> activeLoadTask;
 
     public MainView(Stage stage) {
@@ -109,6 +113,7 @@ public final class MainView extends StackPane {
                 updateContent(oldValue);
                 return;
             }
+            editingWord = false;
             updateContent(newValue);
         });
 
@@ -120,6 +125,8 @@ public final class MainView extends StackPane {
             }
         });
         editor.setOnSaveRequested(this::saveCurrent);
+        wordEditor.setOnContentChanged(documentList::refresh);
+        wordEditor.setOnSaveRequested(this::saveCurrent);
 
         stage.setOnCloseRequest(this::handleCloseRequest);
         updateContent(null);
@@ -146,13 +153,20 @@ public final class MainView extends StackPane {
         saveButton.setDisable(true);
         saveButton.setOnAction(event -> saveCurrent());
 
+        editButton.setVisible(false);
+        editButton.setManaged(false);
+        editButton.setOnAction(event -> {
+            editingWord = !editingWord;
+            updateContent(selectedDocument());
+        });
+
         Button printButton = new Button("Print");
         printButton.getStyleClass().add("dnp-primary");
         printButton.setGraphic(Icons.of("dnp-icon-print", 14));
         printButton.setGraphicTextGap(6);
         printButton.setOnAction(event -> printCurrent());
 
-        HBox bar = new HBox(12, title, spacer, busyIndicator, documentInfo, saveButton, printButton);
+        HBox bar = new HBox(12, title, spacer, busyIndicator, documentInfo, editButton, saveButton, printButton);
         bar.getStyleClass().add("dnp-top-bar");
         bar.setAlignment(Pos.CENTER_LEFT);
         return bar;
@@ -183,6 +197,8 @@ public final class MainView extends StackPane {
     private Node buildMainArea() {
         editor.setPrefWidth(420);
         editor.setMinWidth(220);
+        wordEditor.setPrefWidth(420);
+        wordEditor.setMinWidth(220);
         previewPane.setMinWidth(200);
 
         workspaceSplit.setOrientation(Orientation.HORIZONTAL);
@@ -293,7 +309,10 @@ public final class MainView extends StackPane {
         if (model == null) {
             previewPane.clear();
             editor.setDocument(null);
-            setEditorVisible(false);
+            wordEditor.setDocument(null);
+            setEditorVisible(null);
+            editButton.setVisible(false);
+            editButton.setManaged(false);
             centerHost.getChildren().setAll(emptyState);
             documentInfo.setText("");
             saveButton.setDisable(true);
@@ -302,25 +321,40 @@ public final class MainView extends StackPane {
         previewPane.setDocument(model.toRendered());
         centerHost.getChildren().setAll(workspaceSplit);
         saveButton.setDisable(!model.isEditable());
-        if (model.isEditable()) {
+        boolean word = model.type() == DocumentType.DOCX;
+        editButton.setVisible(word);
+        editButton.setManaged(word);
+        editButton.setText(editingWord ? "Preview only" : "Edit DOCX");
+        if (word && editingWord) {
+            editor.setDocument(null);
+            wordEditor.setDocument(model);
+            setEditorVisible(wordEditor);
+        } else if (word) {
+            editor.setDocument(null);
+            wordEditor.setDocument(null);
+            setEditorVisible(null);
+        } else if (model.isEditable()) {
+            wordEditor.setDocument(null);
             editor.setDocument(model);
-            setEditorVisible(true);
+            setEditorVisible(editor);
         } else {
             editor.setDocument(null);
-            setEditorVisible(false);
+            wordEditor.setDocument(null);
+            setEditorVisible(null);
         }
         documentInfo.setText(model.type().description() + "  \u2022  "
-                + (model.isEditable() ? "editable" : "preview & print only"));
+                + (word ? (editingWord ? "editing paragraphs" : "preview (edit on request)")
+                        : model.isEditable() ? "editable" : "preview & print only"));
     }
 
-    private void setEditorVisible(boolean visible) {
-        if (visible) {
-            if (!workspaceSplit.getItems().contains(editor)) {
-                workspaceSplit.getItems().add(editor);
+    private void setEditorVisible(Node activeEditor) {
+        workspaceSplit.getItems().removeAll(editor, wordEditor);
+        if (activeEditor != null) {
+            if (!workspaceSplit.getItems().contains(activeEditor)) {
+                workspaceSplit.getItems().add(activeEditor);
             }
             workspaceSplit.setDividerPositions(0.62);
         } else {
-            workspaceSplit.getItems().remove(editor);
             if (!workspaceSplit.getItems().isEmpty()) {
                 workspaceSplit.setDividerPositions(1.0);
             }
@@ -344,6 +378,9 @@ public final class MainView extends StackPane {
         DocumentModel model = selectedDocument();
         if (model == null) {
             showNotice("Open a document before printing.");
+            return;
+        }
+        if (model.type() == DocumentType.DOCX && model.isDirty() && !resolveUnsavedChanges(model)) {
             return;
         }
         RenderedDocument rendered = model.toRendered();
@@ -426,7 +463,12 @@ public final class MainView extends StackPane {
 
     private boolean writeTo(DocumentModel model, Path target, DocumentType targetType) {
         try {
-            writers.write(model.text(), target, targetType);
+            if (targetType == DocumentType.DOCX) {
+                writers.writeWord(model.path(), model.wordParagraphs(), model.editedParagraphs(), target);
+                model.replaceRendered(new DocumentReaders().read(target));
+            } else {
+                writers.write(model.text(), target, targetType);
+            }
             model.setPath(target);
             model.markSaved();
             updateContent(model);
